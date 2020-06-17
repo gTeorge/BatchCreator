@@ -1,7 +1,0 @@
-{
-  "Command": "C:\\\\GIT_MRS_REQ_2\\\\scripts\\pt_launcher.bat",
-  "DelaySec": 600,
-  "Scripts": null,
-  "FileExtensions": ["all", ".bat", ".md"]
-}
-
