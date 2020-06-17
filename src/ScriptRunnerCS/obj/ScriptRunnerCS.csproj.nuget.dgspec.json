@@ -1,0 +1,73 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Development\\Cinoslav\\ScriptRunner\\ScriptRunnerCS\\ScriptRunnerCS.csproj": {}
+  },
+  "projects": {
+    "C:\\Development\\Cinoslav\\ScriptRunner\\ScriptRunnerCS\\ScriptRunnerCS.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Development\\Cinoslav\\ScriptRunner\\ScriptRunnerCS\\ScriptRunnerCS.csproj",
+        "projectName": "ScriptRunnerCS",
+        "projectPath": "C:\\Development\\Cinoslav\\ScriptRunner\\ScriptRunnerCS\\ScriptRunnerCS.csproj",
+        "packagesPath": "C:\\Users\\petetmic\\.nuget\\packages\\",
+        "outputPath": "C:\\Development\\Cinoslav\\ScriptRunner\\ScriptRunnerCS\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\petetmic\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {},
+          "https://tsuartifactory.shared.int.tds.tieto.com/artifactory/api/nuget/tsu-nuget": {},
+          "https://tsuartifactory.shared.int.tds.tieto.com/artifactory/api/nuget/tsu-testautomation-nuget": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "dependencies": {
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            },
+            "Microsoft.WindowsDesktop.App.WPF": {
+              "privateAssets": "none"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
