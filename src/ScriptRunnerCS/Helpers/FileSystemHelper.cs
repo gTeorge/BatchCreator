@@ -1,13 +1,16 @@
-﻿using System.Windows.Forms;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace ScriptRunnerCS.Helpers
 {
     public class FileSystemHelper
     {
-        public readonly string JSON = "json files (*.json)|*.json";
-        public readonly string Bat = "batch files (*.bat)|*.bat";
+        public Dictionary<string, string> extensions = new Dictionary<string, string>()
+        {
+            {"json", "json files (*.json)|*.json"},
+            {"bat", "batch files (*.bat)|*.bat"}
+        };
 
         public string GetFolderName()
         {
@@ -48,7 +51,7 @@ namespace ScriptRunnerCS.Helpers
             var ofd = new OpenFileDialog()
             {
                 InitialDirectory = "c:\\",
-                Filter = "json files (*.json)|*.json",
+                Filter = extensions["json"],
                 FilterIndex = 2,
                 RestoreDirectory = true,
                 Title = "Open config file"

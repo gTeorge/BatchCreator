@@ -33,5 +33,16 @@ Delay in seconds between each file.
 **Filter ext**
 Filters the view to show only files with a corresponding file extension.
 
+## Config.json
+You can set there what should be loaded when app is open.
+```json
+{
+  "Command": "C:\\\\GIT_MRS_REQ_2\\\\scripts\\pt_launcher.bat",
+  "DelaySec": 600,
+  "Scripts": null,
+  "FileExtensions": ["all", ".bat", ".md"]
+}
+```
+
 ## Planned
 Buttons for hide and remove file from list.

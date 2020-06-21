@@ -1,12 +1,13 @@
-﻿using ScriptRunnerCS.Helpers;
+﻿using Newtonsoft.Json;
+using ScriptRunnerCS.Helpers;
 using ScriptRunnerCS.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using Newtonsoft.Json;
-using System.IO;
 using System.Windows.Data;
 
 namespace ScriptRunnerCS
@@ -15,11 +16,10 @@ namespace ScriptRunnerCS
     {
         FileSystemHelper FSHelper = new FileSystemHelper();
         private ConfigModel _config { get; set; }
-        private bool _allSet = false;
+        private bool isAllSet = false;
 
         public MainWindow()
         {
-            var test = JsonConvert.DeserializeObject(File.ReadAllText("config.json"));
             _config = JsonConvert.DeserializeObject<ConfigModel>(File.ReadAllText("config.json"));
             _config.Scripts = new List<ScriptModel>() {
                 new ScriptModel
@@ -33,24 +33,19 @@ namespace ScriptRunnerCS
             InitializeComponent();
 
             DataContext = _config;
-            listView.ItemsSource = _config.Scripts;
-
-            ExtensionsSelectBox.SelectedIndex = 0; // sets filter to fist file extension as filter
-
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listView.ItemsSource);
-            view.Filter = VisibilityFilter;
+            SetView();
+            ExtensionsSelectBox.SelectedIndex = 0;
         }
 
-        private bool VisibilityFilter(object item)
+        private void SetView()
         {
-            if(item is null)
-            {
-                return false;
-            }
-            return (item as ScriptModel).IsVisible;
+            listView.ItemsSource = _config.Scripts;
+            (CollectionViewSource.GetDefaultView(listView.ItemsSource) as CollectionView).Filter = VisibilityFilter;
         }
-        private void RefreshView() 
-            => CollectionViewSource.GetDefaultView(listView.ItemsSource).Refresh();
+
+        private bool VisibilityFilter(object item) => (item as ScriptModel).IsVisible;
+
+        private void RefreshView() => CollectionViewSource.GetDefaultView(listView.ItemsSource).Refresh();
 
         private void LoadButton_Click(object sender, RoutedEventArgs e)
         {
@@ -58,34 +53,24 @@ namespace ScriptRunnerCS
             if (!string.IsNullOrEmpty(fileContent))
             {
                 _config = JsonConvert.DeserializeObject<ConfigModel>(fileContent);
-                listView.ItemsSource = _config.Scripts;
-                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listView.ItemsSource);
-                view.Filter = VisibilityFilter;
+                SetView();
             }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             var fileContent = JsonConvert.SerializeObject(_config, Formatting.Indented);
-            FSHelper.SaveFile(fileContent, FSHelper.JSON);
+            FSHelper.SaveFile(fileContent, FSHelper.extensions["json"]);
         }
 
         private void SelectFolderButton_Click(object sender, RoutedEventArgs e)
         {
-            var folder = FSHelper.GetFolderName();
-            var files = FSHelper.GetFileNames(folder);
+            var files = FSHelper.GetFileNames(FSHelper.GetFolderName()).ToList<string>();
 
             _config.Scripts = new List<ScriptModel>();
-
-
-            foreach (var file in files)
-            {
-                _config.Scripts.Add(new ScriptModel { IsSet = true, Name = file, IsVisible = true });
-            }
-
-            listView.ItemsSource = _config.Scripts;
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listView.ItemsSource);
-            view.Filter = VisibilityFilter;
+            files.ForEach(x => _config.Scripts.Add(new ScriptModel { IsSet = true, Name = x, IsVisible = true }));
+            
+            SetView();
         }
 
         private void CommandTextBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -101,19 +86,33 @@ namespace ScriptRunnerCS
             }
             catch (FormatException)
             {
-                MessageBox.Show("Input has wrong format, please enter integer.", "Error - wrong format!", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show
+                (
+                    "Input has wrong format, please enter integer.",
+                    "Error - wrong format!",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
 
         private void CreateBatchButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_config.Scripts == null)
+            if (_config.Scripts is null)
             {
-                MessageBox.Show("List is empty", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show
+                (
+                    "List is empty",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
                 return;
             }
+
             var sb = new StringBuilder();
             sb.Append("echo Starting & ");
+
             foreach (var file in _config.Scripts)
             {
                 if (file.IsSet)
@@ -128,18 +127,13 @@ namespace ScriptRunnerCS
             }
             sb.Append("echo finnished");
 
-            FSHelper.SaveFile(sb.ToString(),FSHelper.Bat);
+            FSHelper.SaveFile(sb.ToString(), FSHelper.extensions["bat"]);
         }
 
         private void GridViewColumnHeaderSet_Click(object sender, RoutedEventArgs e)
         {
-            var state = !_allSet;
-            _allSet = state;
-
-            foreach (var file in _config.Scripts)
-            {
-                file.IsSet = state;
-            }
+            isAllSet = !isAllSet;
+            _config.Scripts.ForEach(x => x.IsSet = isAllSet);
 
             RefreshView();
         }
@@ -147,23 +141,24 @@ namespace ScriptRunnerCS
         private void ExtensionsSelectBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_config.Scripts is null)
-            { 
+            {
                 return;
             }
 
-            var comboBox = sender as ComboBox;
-            var filter = comboBox.SelectedItem as string;
+            var filter = (sender as ComboBox).SelectedItem as string;
 
             switch (filter)
             {
                 case null:
                     break;
+
                 case "all":
                     _config.Scripts.ForEach(x =>
                    {
                        x.IsVisible = true;
                    });
                     break;
+
                 default:
                     _config.Scripts.ForEach(x =>
                     {
@@ -177,6 +172,6 @@ namespace ScriptRunnerCS
             }
 
             RefreshView();
-         }
+        }
     }
 }
