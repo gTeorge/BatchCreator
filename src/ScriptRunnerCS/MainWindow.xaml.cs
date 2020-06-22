@@ -117,15 +117,10 @@ namespace ScriptRunnerCS
             {
                 if (file.IsSet)
                 {
-                    sb.Append(_config.Command);
-                    sb.Append(" ");
-                    sb.Append(file.Name);
-                    sb.Append(" & timeout ");
-                    sb.Append(_config.DelaySec);
-                    sb.Append(" & ");
+                    sb.Append($"{_config.Command} {file.Name} & timeout {_config.DelaySec} & " );
                 }
             }
-            sb.Append("echo finnished");
+            sb.Append("echo finished");
 
             FSHelper.SaveFile(sb.ToString(), FSHelper.extensions["bat"]);
         }
@@ -145,13 +140,10 @@ namespace ScriptRunnerCS
                 return;
             }
 
-            var filter = (sender as ComboBox).SelectedItem as string;
+            string filter = (sender as ComboBox).SelectedItem as string;
 
-            switch (filter)
+            switch (filter.ToLower())
             {
-                case null:
-                    break;
-
                 case "all":
                     _config.Scripts.ForEach(x =>
                    {
@@ -162,7 +154,7 @@ namespace ScriptRunnerCS
                 default:
                     _config.Scripts.ForEach(x =>
                     {
-                        x.IsVisible = x.Name.EndsWith(filter) ? true : false;
+                        x.IsVisible = x.Name.ToLower().EndsWith(filter);
                         if (!x.IsVisible)
                         {
                             x.IsSet = false;
